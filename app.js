@@ -4,8 +4,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
-const Config = require('./app/config');
-const apiRoutes = require('./app/routes/routes');
+const config = require('./app/config');
+const routes = require('./app/routes/routes');
 const port = process.env.PORT || 3000;
 const app = express();
 
@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-Config.DB.authenticate().then(() => {
+config.DB.authenticate().then(() => {
   console.log('Database connected successfully!');
 }).catch((err) => {
   console.log('Unable to establish a connection with the database!');
@@ -31,7 +31,7 @@ app.use('/', (req, res) => {
   });
 });
 
-app.use('/api', apiRoutes);
+app.use('/api', routes);
 
 app.listen(port);
 
