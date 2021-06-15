@@ -2,9 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
 
 const config = require('./app/config');
-const routes = require('./app/routes/routes');
+const apiRoutes = require('./app/routes/routes');
 const port = process.env.PORT || 3000;
 const app = express();
 
@@ -14,32 +16,32 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-let connectionResponse = null;
-config.DB.authenticate().then((res) => {
-  console.log('Database connected successfully!');
-  connectionResponse = {
-    message: 'Database connected successfully!',
-    data: res
-  };
-}).catch((err) => {
-  console.log(err);
-  connectionResponse = {
-    message: 'Unable to establish a connection with the database!',
-    data: err
-  };
-});
+const options = {
+  useNewUrlParser: true,
+  useFindAndModify: false,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+  autoIndex: false,
+  poolSize: 100,
+  bufferMaxEntries: 0,
+  connectTimeoutMS: 10000,
+  socketTimeoutMS: 45000,
+  family: 4,
+};
 
-app.use('/api', routes);
+mongoose.connect(config.database, options);
+mongoose.set('useFindAndModify', false);
+app.set('superSecret', config.serverSecret);
 
-app.use('/', (req, res) => {
+app.use('/api', apiRoutes);
+
+app.get('/', function(req, res) {
   res.status(200);
   res.json({
-    status: true,
+    success: true,
     message: 'Welcome to the coolest API on the earth!',
-    data: connectionResponse
   });
 });
 
 app.listen(port);
-
-console.log('Server is running successfully!');
+console.log('Backend server is running on http://localhost:3000');

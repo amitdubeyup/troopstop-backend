@@ -161,7 +161,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/troopstop/production/1623765778768-2021-06-15T14:02:58.768Z/troopstop.zip"
+          "S3Key": "serverless/troopstop/production/1623774752156-2021-06-15T16:32:32.156Z/troopstop.zip"
         },
         "Handler": "index.server",
         "Runtime": "nodejs12.x",
@@ -184,14 +184,14 @@
         "AppLogGroup"
       ]
     },
-    "AppLambdaVersion1x1bAxhVB1UC26scTaDUH0eRmli6sRKZ1dtATMT2l4": {
+    "AppLambdaVersion3ot0jHfjjmpGBO58cunmmIsPgWFphnF3ZRSGseb40": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "AppLambdaFunction"
         },
-        "CodeSha256": "3B2G1VjbovK9wdckE7YDhLE5JulEKCKuzz1ZEF3/8jI="
+        "CodeSha256": "WRN7sPP5gpnsfYVk5FUmh92z33+lN4tAfxIVtBR1yys="
       }
     },
     "ApiGatewayRestApi": {
@@ -403,7 +403,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1623765762667": {
+    "ApiGatewayDeployment1623774741469": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -465,7 +465,7 @@
     "AppLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "AppLambdaVersion1x1bAxhVB1UC26scTaDUH0eRmli6sRKZ1dtATMT2l4"
+        "Ref": "AppLambdaVersion3ot0jHfjjmpGBO58cunmmIsPgWFphnF3ZRSGseb40"
       }
     },
     "ServiceEndpoint": {
