@@ -1,0 +1,44 @@
+service: troopstop
+
+custom:
+  secrets: ${file(secrets.json)}
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: production
+  region: ap-south-1
+  environment: 
+    NODE_ENV: ${self:custom.secrets.NODE_ENV}
+  apiGateway:
+    shouldStartNameWithService: true
+  lambdaHashingVersion: 20201221
+
+functions:
+  app:
+    handler: index.server
+    timeout: 45 
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors: 
+            origin: '*'
+            headers:
+              - Content-Type
+              - Authorization
+              - Auth-Token
+            allowCredentials: false
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: 
+            origin: '*'
+            headers:
+              - Content-Type
+              - Authorization
+              - Auth-Token
+            allowCredentials: false
+
+# plugins:
+#   - serverless-offline

@@ -1,13 +1,16 @@
 const AWS = require("aws-sdk");
 AWS.config.update({ region: "ap-south-1" });
-const { Sequelize } = require('sequelize');
-const DB = new Sequelize('troopstop', 'troopstop', 'troopstop', {
-    host: 'troop-stop.cipskr3q59sq.ap-south-1.rds.amazonaws.com',
-    dialect: 'mysql'
-});
 const S3 = new AWS.S3({
   accessKeyId: 'AKIATWF3VOVMERWWLQT4',
   secretAccessKey: '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',
+});
+
+const { Sequelize } = require('sequelize');
+
+const DB = new Sequelize('troopstop', 'troopstop', 'troopstop', {
+  host: 'troop-stop.cipskr3q59sq.ap-south-1.rds.amazonaws.com',
+  port: 3306,
+  dialect: 'mysql'
 });
 
 module.exports = {
