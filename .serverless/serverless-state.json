@@ -16,7 +16,6 @@
         "shouldStartNameWithService": true
       },
       "lambdaHashingVersion": "20201221",
-      "variableSyntax": "\\${([^{}:]+?(?:\\(|:)(?:[^:{}][^{}]*?)?)}",
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
@@ -181,13 +180,13 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/troopstop/production/1623774752156-2021-06-15T16:32:32.156Z/troopstop.zip"
+                "S3Key": "serverless/troopstop/production/1624005921024-2021-06-18T08:45:21.024Z/troopstop.zip"
               },
               "Handler": "index.server",
               "Runtime": "nodejs12.x",
               "FunctionName": "troopstop-production-app",
               "MemorySize": 1024,
-              "Timeout": 45,
+              "Timeout": 30,
               "Environment": {
                 "Variables": {
                   "NODE_ENV": "production"
@@ -204,14 +203,14 @@
               "AppLogGroup"
             ]
           },
-          "AppLambdaVersion3ot0jHfjjmpGBO58cunmmIsPgWFphnF3ZRSGseb40": {
+          "AppLambdaVersionrOpQWol6h0uN1DNfrbCOuCgbhTkcVa87DOig3E1ySVs": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AppLambdaFunction"
               },
-              "CodeSha256": "WRN7sPP5gpnsfYVk5FUmh92z33+lN4tAfxIVtBR1yys="
+              "CodeSha256": "2EVwaTGuLWnSmIyFdPEavEF2vnvUfMHPet6IxfSMih0="
             }
           },
           "ApiGatewayRestApi": {
@@ -423,7 +422,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1623774741469": {
+          "ApiGatewayDeployment1624005910939": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -480,12 +479,18 @@
           "ServerlessDeploymentBucketName": {
             "Value": {
               "Ref": "ServerlessDeploymentBucket"
+            },
+            "Export": {
+              "Name": "sls-troopstop-production-ServerlessDeploymentBucketName"
             }
           },
           "AppLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AppLambdaVersion3ot0jHfjjmpGBO58cunmmIsPgWFphnF3ZRSGseb40"
+              "Ref": "AppLambdaVersionrOpQWol6h0uN1DNfrbCOuCgbhTkcVa87DOig3E1ySVs"
+            },
+            "Export": {
+              "Name": "sls-troopstop-production-AppLambdaFunctionQualifiedArn"
             }
           },
           "ServiceEndpoint": {
@@ -509,6 +514,9 @@
                   "/production"
                 ]
               ]
+            },
+            "Export": {
+              "Name": "sls-troopstop-production-ServiceEndpoint"
             }
           }
         }
@@ -606,7 +614,7 @@
     "functions": {
       "app": {
         "handler": "index.server",
-        "timeout": 45,
+        "timeout": 30,
         "events": [
           {
             "http": {
@@ -654,12 +662,11 @@
         "memory": 1024,
         "runtime": "nodejs12.x",
         "vpc": {},
-        "versionLogicalId": "AppLambdaVersion3ot0jHfjjmpGBO58cunmmIsPgWFphnF3ZRSGseb40"
+        "versionLogicalId": "AppLambdaVersionrOpQWol6h0uN1DNfrbCOuCgbhTkcVa87DOig3E1ySVs"
       }
     },
     "configValidationMode": "warn",
     "serviceFilename": "serverless.yml",
-    "layers": {},
     "initialServerlessConfig": {
       "service": {
         "$ref": "$[\"service\"][\"serviceObject\"]"
@@ -674,11 +681,12 @@
         "$ref": "$[\"service\"][\"functions\"]"
       }
     },
+    "layers": {},
     "isDashboardMonitoringPreconfigured": false,
     "artifact": "/Users/amitdubey/Desktop/Project/company/troopstop/troopstop-backend/.serverless/troopstop.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/troopstop/production/1623774752156-2021-06-15T16:32:32.156Z",
+    "artifactDirectoryName": "serverless/troopstop/production/1624005921024-2021-06-18T08:45:21.024Z",
     "artifact": "troopstop.zip"
   }
 }
