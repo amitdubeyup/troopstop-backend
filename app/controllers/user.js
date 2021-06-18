@@ -4,8 +4,6 @@ const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const ObjectId = require('mongoose').Types.ObjectId;
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
-const requestIp = require('request-ip');
-const _ = require('lodash');
 
 module.exports = {
   sendOtp: sendOtp,
@@ -22,11 +20,11 @@ function generateOTP(n) {
   return Math.floor(Math.random() * (9 * Math.pow(10, n - 1))) + Math.pow(10, n - 1);
 }
 
-function sendOTP2Customer(mobile, otp) {
+function sendOTP2Customer(mobile, mobileCode) {
   return new Promise((resolve, reject) => {
     axios({
       method: 'GET',
-      url: `https://2factor.in/API/R1/?module=TRANS_SMS&apikey=695f5ce6-fd28-11e8-a895-0200cd936042&to=${mobile}&from=HOSTBK&templatename=HB_POS_OTP&var1=${otp}`,
+      url: `https://2factor.in/API/R1/?module=TRANS_SMS&apikey=695f5ce6-fd28-11e8-a895-0200cd936042&to=${mobile}&from=TRSTOP&templatename=HB_TROOPSTOP&var1=${mobileCode}`,
     })
       .then(response => {
         if (response['status'] == 200) {
@@ -57,56 +55,71 @@ function sendOtp(req, res) {
       mobile: req.body.mobile,
     })
       .then(response => {
+        const mobile = req.body.mobile;
+        const mobileCode = generateOTP(6);
         if (response) {
-          if (response.status == 'inactive') {
-            res.status(400);
-            return res.json({
-              success: false,
-              message: 'Account blocked, Please contact with support team!',
-            });
-          } else {
-            const mobile = req.body.mobile;
-            const otp = generateOTP(6);
-            sendOTP2Customer(mobile, otp).then(otpResponse => {
-              if (otpResponse) {
-                User.findByIdAndUpdate({
-                  _id: new ObjectId(response._id)
-                }, {
-                  $set: {
-                    otp: otp
-                  }
-                }, {
-                  new: true
-                })
-                  .then(response => {
-                    res.status(200);
-                    return res.json({
-                      success: true,
-                      message: 'OTP sent successfully!',
-                    });
-                  })
-                  .catch(error => {
-                    res.status(400);
-                    return res.json({
-                      success: false,
-                      message: 'Unable to send otp!',
-                      error: error,
-                    });
+          sendOTP2Customer(mobile, mobileCode).then(otpResponse => {
+            if (otpResponse) {
+              User.findByIdAndUpdate({
+                _id: new ObjectId(response._id)
+              }, {
+                $set: {
+                  mobileCode: mobileCode
+                }
+              }, {
+                new: true
+              })
+                .then(response => {
+                  res.status(200);
+                  return res.json({
+                    success: true,
+                    message: 'OTP sent successfully!',
                   });
-              } else {
-                res.status(400);
-                return res.json({
-                  success: false,
-                  message: 'Unable to send otp!',
+                })
+                .catch(error => {
+                  res.status(400);
+                  return res.json({
+                    success: false,
+                    message: 'Unable to send otp!',
+                  });
                 });
-              }
-            });
-          }
+            } else {
+              res.status(400);
+              return res.json({
+                success: false,
+                message: 'Unable to send otp!',
+              });
+            }
+          });
         } else {
-          res.status(400);
-          return res.json({
-            success: false,
-            message: 'You are not registered!',
+          sendOTP2Customer(mobile, mobileCode).then(otpResponse => {
+            if (otpResponse) {
+              let user = new User({
+                mobile: mobile,
+                mobileCode: mobileCode,
+              });
+              user.save()
+                .then(response => {
+                  res.status(200);
+                  return res.json({
+                    success: true,
+                    message: 'OTP sent successfully!',
+                  });
+                })
+                .catch(error => {
+                  res.status(400);
+                  return res.json({
+                    success: false,
+                    message: 'Unable to send otp!',
+                  });
+                });
+            } else {
+              res.status(400);
+              return res.json({
+                success: false,
+                message: 'Unable to send otp!',
+              });
+            }
           });
         }
       })
@@ -115,7 +128,6 @@ function sendOtp(req, res) {
         return res.json({
           success: false,
           message: 'Unable to send otp!',
-          error: error,
         });
       });
   }
@@ -129,7 +141,7 @@ function loginUser(req, res) {
       message: 'Mobile number is required!',
     });
   }
-  if (!req.body.otp) {
+  if (!req.body.mobileCode) {
     res.status(400);
     return res.json({
       success: false,
@@ -137,43 +149,39 @@ function loginUser(req, res) {
     });
   } else {
     User.findOne({
-      mobile: req.body.mobile,
+      mobile: parseInt(req.body.mobile, 10)
     })
       .then(response => {
         if (response) {
-          if (parseInt(req.body.otp) == parseInt(response.otp)) {
-            if (response.status == 'inactive') {
-              res.status(400);
-              return res.json({
-                success: false,
-                message: 'Account blocked, Please contact with support team!',
-              });
-            } else {
-              const token = jwt.sign({
-                data: response,
-              },
-                config.serverSecret, {
-                expiresIn: config.tokenExpire,
-              });
-              res.status(200);
-              return res.json({
-                success: true,
-                message: 'Logged in successfully!',
-                token: token
-              });
-            }
+          if (parseInt(req.body.mobileCode) == parseInt(response.mobileCode)) {
+            const token = jwt.sign({
+              data: response,
+            },
+              config.serverSecret, {
+              expiresIn: config.tokenExpire,
+            });
+            updateUserData({
+              _id: response._id,
+              emailVerified: 1
+            });
+            res.status(200);
+            return res.json({
+              success: true,
+              message: 'Logged in successfully!',
+              token: token
+            });
           } else {
             res.status(400);
             return res.json({
               success: false,
-              message: 'Invalid OTP!',
+              message: 'Invalid OTP!'
             });
           }
         } else {
           res.status(400);
           return res.json({
             success: false,
-            message: 'You are not registered!',
+            message: 'You are not registered!'
           });
         }
       })
@@ -181,11 +189,22 @@ function loginUser(req, res) {
         res.status(400);
         return res.json({
           success: false,
-          message: 'Unable to login!',
-          error: error,
+          message: 'Unable to login!'
         });
       });
   }
+}
+
+function updateUserData(data) {
+  User.findByIdAndUpdate({
+    _id: new ObjectId(data._id)
+  }, {
+    $set: data
+  }, {
+    new: true
+  })
+    .then()
+    .catch();
 }
 
 function registerUser(req, res) {
@@ -201,32 +220,7 @@ function registerUser(req, res) {
           message: 'User already exit!',
         });
       } else {
-        let user = new User({
-          fullName: req.body.fullName,
-          salutation: req.body.salutation,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          email: req.body.email,
-          mobile: req.body.mobile,
-          alternateMobile: req.body.alternateMobile,
-          gender: req.body.gender,
-          dob: req.body.dob,
-          addressOne: req.body.addressOne,
-          addressTwo: req.body.addressTwo,
-          landmark: req.body.landmark,
-          city: req.body.city,
-          state: req.body.state,
-          pincode: req.body.pincode,
-          latitude: req.body.latitude,
-          longitude: req.body.longitude,
-          aadhar: req.body.aadhar,
-          pan: req.body.pan,
-          photo: req.body.photo,
-          createdFrom: req.body.createdFrom,
-          createdIp: req.body.createdIp,
-          otp: req.body.otp,
-          status: req.body.status,
-        });
+        let user = new User(req.body);
         user.save()
           .then(response => {
             res.status(200);

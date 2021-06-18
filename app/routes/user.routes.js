@@ -2,15 +2,16 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/user');
 const UserGuard = require('../auth/auth');
+const dataValidator = require('../validator/data');
 
-router.post('/send-otp', UserController.sendOtp);
-router.post('/login', UserController.loginUser);
-router.post('/register', UserController.registerUser);
-router.post('/fetch', UserGuard, UserController.fetchUser);
-router.post('/fetch-all', UserGuard, UserController.fetchAllUser);
-router.post('/update', UserGuard, UserController.updateUser);
-router.post('/update-all', UserGuard, UserController.updateAllUser);
-router.post('/remove', UserGuard, UserController.removeUser);
+router.post('/send-otp', dataValidator, UserController.sendOtp);
+router.post('/login', dataValidator, UserController.loginUser);
+router.post('/register', dataValidator, UserController.registerUser);
+router.post('/fetch', dataValidator, UserGuard, UserController.fetchUser);
+router.post('/fetch-all', dataValidator, UserGuard, UserController.fetchAllUser);
+router.post('/update', dataValidator, UserGuard, UserController.updateUser);
+router.post('/update-all', dataValidator, UserGuard, UserController.updateAllUser);
+router.post('/remove', dataValidator, UserGuard, UserController.removeUser);
 
 router.get('/', function (req, res, next) {
   res.status(200);

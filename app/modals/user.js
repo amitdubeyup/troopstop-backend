@@ -21,6 +21,7 @@ module.exports = mongoose.model(
       unique: true,
       lowercase: true,
       trim: true,
+      default: null,
     },
     emailVerified: {
       type: Number,
@@ -98,6 +99,7 @@ module.exports = mongoose.model(
     },
   }, {
     timestamps: true,
-    collection: 'User'
+    collection: 'User',
+    versionKey: false
   })
 );
