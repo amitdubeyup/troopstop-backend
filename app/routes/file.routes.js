@@ -7,10 +7,11 @@ router.post('/convert-base64-to-file', fileController.convertBase64DataToFile);
 router.post('/remove-file', fileController.removeFile);
 router.post('/create-s3-bucket', fileController.createS3Bucket);
 router.get('/list-s3-bucket', fileController.listS3Bucket);
-router.post('/upload-s3-bucket', fileController.uploadS3Bucket);
 router.post('/put-s3-bucket', fileController.puS3Bucket);
 router.post('/list-s3-bucket-objects', fileController.listS3BucketObjects);
 router.post('/delete-s3-bucket', fileController.deleteS3Bucket);
+router.post('/upload-file', fileController.uploadFile);
+router.post('/delete-file', fileController.deleteFile);
 
 router.get('/', function(req, res, next) {
   res.status(200);

@@ -1,5 +1,5 @@
 const config = require("../config");
-const uuid = require('uuid');
+const crypto = require("crypto");
 const base64Img = require('base64-img');
 const fs = require('fs');
 
@@ -9,10 +9,11 @@ module.exports = {
   removeFile: removeFile,
   createS3Bucket: createS3Bucket,
   listS3Bucket: listS3Bucket,
-  uploadS3Bucket: uploadS3Bucket,
   puS3Bucket: puS3Bucket,
   listS3BucketObjects: listS3BucketObjects,
-  deleteS3Bucket: deleteS3Bucket
+  deleteS3Bucket: deleteS3Bucket,
+  uploadFile: uploadFile,
+  deleteFile: deleteFile
 }
 
 function convertFileUrlToBase64Data(req, res) {
@@ -38,7 +39,7 @@ function convertFileUrlToBase64Data(req, res) {
 function convertBase64DataToFile(req, res) {
   const fileData = req.body.fileData;
   const fileDestination = 'public/uploads';
-  const fileName = uuid();
+  const fileName = crypto.randomBytes(16).toString("hex");;
   base64Img.img(fileData, fileDestination, fileName, (error, response) => {
     if (error) {
       res.status(400);
@@ -97,7 +98,7 @@ function createS3Bucket(req, res) {
       LocationConstraint: req.body.bucketLocation
     }
   };
-  config.S3.createBucket(params, function(error, response) {
+  config.S3.createBucket(params, function (error, response) {
     if (error) {
       res.status(400);
       res.json({
@@ -117,7 +118,7 @@ function createS3Bucket(req, res) {
 }
 
 function listS3Bucket(req, res) {
-  config.S3.listBuckets(function(error, response) {
+  config.S3.listBuckets(function (error, response) {
     if (error) {
       res.status(400);
       res.json({
@@ -136,48 +137,18 @@ function listS3Bucket(req, res) {
   });
 }
 
-function uploadS3Bucket(req, res) {
-  const base64Data = new Buffer.from((req.body.fileData).replace(/^data:image\/\w+;base64,/, ""), 'base64');
-  const type = (req.body.fileData).split(';')[0].split('/')[1];
-  const params = {
-    Bucket: req.body.bucketName,
-    Key: `${uuid()}.${type}`,
-    Body: base64Data,
-    ACL: 'public-read',
-    ContentEncoding: 'base64',
-    ContentType: `image/${type}`
-  };
-  config.S3.upload(params, function(error, response) {
-    if (error) {
-      res.status(400);
-      res.json({
-        success: false,
-        message: 'Unable to upload file!',
-        data: error
-      });
-    } else {
-      res.status(200);
-      res.json({
-        success: true,
-        message: 'File uploaded successfully!',
-        data: response.Location
-      });
-    }
-  });
-}
-
 function puS3Bucket(req, res) {
   const base64Data = new Buffer.from((req.body.fileData).replace(/^data:image\/\w+;base64,/, ""), 'base64');
   const type = (req.body.fileData).split(';')[0].split('/')[1];
   const params = {
     Bucket: req.body.bucketName,
-    Key: `${uuid()}.${type}`,
+    Key: `${crypto.randomBytes(16).toString("hex")}.${type}`,
     Body: base64Data,
     ACL: 'public-read',
     ContentEncoding: 'base64',
     ContentType: `image/${type}`
   };
-  config.S3.putObject(params, function(error, response) {
+  config.S3.putObject(params, function (error, response) {
     if (error) {
       res.status(400);
       res.json({
@@ -200,7 +171,7 @@ function listS3BucketObjects(req, res) {
   const bucketParams = {
     Bucket: req.body.bucketName,
   };
-  config.S3.listObjects(bucketParams, function(error, response) {
+  config.S3.listObjects(bucketParams, function (error, response) {
     if (error) {
       res.status(400);
       res.json({
@@ -223,7 +194,7 @@ function deleteS3Bucket(req, res) {
   const bucketParams = {
     Bucket: req.body.bucketName,
   };
-  config.S3.deleteBucket(bucketParams, function(error, response) {
+  config.S3.deleteBucket(bucketParams, function (error, response) {
     if (error) {
       res.status(400);
       res.json({
@@ -239,4 +210,73 @@ function deleteS3Bucket(req, res) {
       });
     }
   });
+}
+
+function uploadFile(req, res) {
+  if (req.body.filePath && req.body.fileData) {
+    const base64Data = new Buffer.from((req.body.fileData).replace(/^data:image\/\w+;base64,/, ""), 'base64');
+    const type = (req.body.fileData).split(';')[0].split('/')[1];
+    const params = {
+      Bucket: req.body.filePath,
+      Key: `${crypto.randomBytes(16).toString("hex")}.${type}`,
+      Body: base64Data,
+      ACL: 'public-read',
+      ContentEncoding: 'base64',
+      ContentType: `image/${type}`
+    };
+    config.S3.upload(params, function (error, response) {
+      if (error) {
+        res.status(400);
+        res.json({
+          success: false,
+          message: 'Unable to upload file!',
+          data: error
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: true,
+          message: 'File uploaded successfully!',
+          data: response.Location
+        });
+      }
+    });
+  } else {
+    res.status(400);
+    res.json({
+      success: false,
+      message: 'Unable to upload file!',
+    });
+  }
+}
+
+function deleteFile(req, res) {
+  if (req.body.filePath && req.body.fileName) {
+    const params = {
+      Bucket: req.body.filePath,
+      Key: req.body.fileName
+    };
+    config.S3.deleteObject(params, function (error, response) {
+      if (error) {
+        res.status(400);
+        res.json({
+          success: false,
+          message: 'Unable to delete file!',
+          data: error
+        });
+      } else {
+        res.status(200);
+        res.json({
+          success: true,
+          message: 'File deleted successfully!'
+        });
+      }
+    });
+  } else {
+    res.status(400);
+    res.json({
+      success: false,
+      message: 'Unable to delete file!',
+    });
+  }
 }

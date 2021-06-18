@@ -22,14 +22,26 @@ module.exports = mongoose.model(
       lowercase: true,
       trim: true,
     },
-    password: {
-      type: String,
-      required: true,
+    emailVerified: {
+      type: Number,
+      default: 0,
+    },
+    emailCode: {
+      type: Number,
+      default: 0,
     },
     mobile: {
       type: Number,
       unique: true,
       required: true,
+      default: 0,
+    },
+    mobileVerified: {
+      type: Number,
+      default: 0,
+    },
+    mobileCode: {
+      type: Number,
       default: 0,
     },
     gender: {
@@ -40,11 +52,7 @@ module.exports = mongoose.model(
       type: String,
       default: null,
     },
-    addressOne: {
-      type: String,
-      default: null,
-    },
-    addressTwo: {
+    localAddress: {
       type: String,
       default: null,
     },
@@ -57,6 +65,10 @@ module.exports = mongoose.model(
       default: null,
     },
     state: {
+      type: String,
+      default: null,
+    },
+    country: {
       type: String,
       default: null,
     },
@@ -76,10 +88,9 @@ module.exports = mongoose.model(
       type: String,
       default: null,
     },
-    teacher: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      default: null
+    type: {
+      type: String,
+      default: null,
     },
     status: {
       type: String,
@@ -87,6 +98,6 @@ module.exports = mongoose.model(
     },
   }, {
     timestamps: true,
-    collection: 'User',
+    collection: 'User'
   })
 );
