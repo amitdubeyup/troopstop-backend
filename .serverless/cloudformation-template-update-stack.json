@@ -161,7 +161,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/troopstop/production/1625246838218-2021-07-02T17:27:18.218Z/troopstop.zip"
+          "S3Key": "serverless/troopstop/production/1625375428047-2021-07-04T05:10:28.047Z/troopstop.zip"
         },
         "Handler": "index.server",
         "Runtime": "nodejs12.x",
@@ -249,7 +249,7 @@
               "StatusCode": "200",
               "ResponseParameters": {
                 "method.response.header.Access-Control-Allow-Origin": "'*'",
-                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,Auth-Token'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,Token'",
                 "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'"
               },
               "ResponseTemplates": {
@@ -297,7 +297,7 @@
               "StatusCode": "200",
               "ResponseParameters": {
                 "method.response.header.Access-Control-Allow-Origin": "'*'",
-                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,Auth-Token'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,Authorization,Token'",
                 "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,DELETE,GET,HEAD,PATCH,POST,PUT'"
               },
               "ResponseTemplates": {
@@ -403,7 +403,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1625246821425": {
+    "ApiGatewayDeployment1625375409044": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {

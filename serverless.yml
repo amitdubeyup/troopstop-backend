@@ -27,7 +27,7 @@ functions:
             headers:
               - Content-Type
               - Authorization
-              - Auth-Token
+              - Token
             allowCredentials: false
       - http:
           path: /{proxy+}
@@ -37,7 +37,7 @@ functions:
             headers:
               - Content-Type
               - Authorization
-              - Auth-Token
+              - Token
             allowCredentials: false
 
 # plugins:
