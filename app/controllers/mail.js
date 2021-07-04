@@ -9,16 +9,16 @@ function sendMail(req, res) {
   nodemailer.createTestAccount((err, account) => {
     const transporter = nodemailer.createTransport({
       port: 465,
-      host: 'smtp.mail.us-east-1.awsapps.com',
+      host: 'smtp.gmail.com',
       secure: true,
+      pool: true,
       auth: {
-        user: 'info@moshikhayaka.com',
-        pass: 'Mishra2020@'
+        user: 'amitdubeynodemailer@gmail.com',
+        pass: 'Gmail@2020'
       },
-      debug: true
     });
     const mailOptions = {
-      from: `Moshikhayaka <info@moshikhayaka.com>`,
+      from: `TroopStop <amitdubeynodemailer@gmail.com>`,
       to: req.body.to,
       subject: req.body.subject,
       html: req.body.html
@@ -48,19 +48,19 @@ function sendCustomMail(mailData) {
     nodemailer.createTestAccount((err, account) => {
       const transporter = nodemailer.createTransport({
         port: 465,
-        host: 'smtp.mail.us-east-1.awsapps.com',
+        host: 'smtp.gmail.com',
         secure: true,
+        pool: true,
         auth: {
-          user: 'info@moshikhayaka.com',
-          pass: 'Mishra2020@'
+          user: 'amitdubeynodemailer@gmail.com',
+          pass: 'Gmail@2020'
         },
-        debug: true
       });
       const mailOptions = {
-        from: `Moshikhayaka <info@moshikhayaka.com>`,
-        to: mailData.to,
-        subject: mailData.subject,
-        html: mailData.html
+        from: `TroopStop <amitdubeynodemailer@gmail.com>`,
+        to: req.body.to,
+        subject: req.body.subject,
+        html: req.body.html
       };
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {

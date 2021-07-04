@@ -9,6 +9,7 @@ const locationRoutes = require('./location.routes');
 const userRoutes = require('./user.routes');
 const fileRoutes = require('./file.routes');
 const chatRoutes = require('./chat.routes');
+const settingRoutes = require('./setting.routes');
 
 routes.use('/update', checkUpdateRoutes);
 routes.use('/jwt', jwtRoutes);
@@ -18,6 +19,7 @@ routes.use('/location', locationRoutes);
 routes.use('/user', userRoutes);
 routes.use('/file', fileRoutes);
 routes.use('/chat', chatRoutes);
+routes.use('/setting', settingRoutes);
 
 
 routes.get('/', function (req, res) {

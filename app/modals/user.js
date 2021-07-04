@@ -89,6 +89,10 @@ module.exports = mongoose.model(
       type: String,
       default: null,
     },
+    idType: {
+      type: String,
+      default: null,
+    },
     type: {
       type: String,
       default: null,

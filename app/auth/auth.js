@@ -4,7 +4,7 @@ var config = require('../config');
 function authGuard(req, res, next) {
   var token = req.body['token'] || req.query['token'] || req.headers['token'];
   if (token) {
-    jwt.verify(token, config.serverSecret, function(err, decoded) {
+    jwt.verify(token, config.serverSecret, function (err, decoded) {
       if (err) {
         const errorData = err;
         if (errorData.message === 'jwt expired') {
