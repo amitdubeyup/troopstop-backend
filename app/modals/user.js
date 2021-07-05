@@ -87,7 +87,7 @@ module.exports = mongoose.model(
     },
     photo: {
       type: String,
-      default: null,
+      default: 'https://troopstop.s3.ap-south-1.amazonaws.com/logo/icon-128.png',
     },
     idType: {
       type: String,
